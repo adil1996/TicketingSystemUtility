@@ -1,0 +1,42 @@
+server:
+  port: 8891
+
+
+api:
+  register:
+    user:
+      url: http://localhost:8881/api/v1/users/add
+    agent:
+      url: http://localhost:8881/api/v1/agents/add
+  fetch:
+    user:
+      url: http://localhost:8881/api/v1/users/fetch/
+    agent:
+      url: http://localhost:8881/api/v1/agents/fetch/
+  ticket:
+    add:
+      url: http://localhost:8881/api/v1/tickets/add
+    fetch:
+      url: http://localhost:8881/api/v1/tickets/fetchall
+      id:
+        url: http://localhost:8881/api/v1/tickets/fetch/
+      status:
+        url: http://localhost:8881/api/v1/tickets/fetch/status/
+      agent:
+        url: http://localhost:8881/api/v1/tickets/fetch/agent/
+      customer:
+        url: http://localhost:8881/api/v1/tickets/fetch/customer/
+    update:
+      details:
+        url: http://localhost:8881/api/v1/tickets/updatedetails
+      status:
+        url: http://localhost:8881/api/v1/tickets/updatestatus
+  agent:
+    assign:
+      url: http://localhost:8881/api/v1/agents/assign
+  email:
+    url: http://localhost:8881/api/v1/email/send
+    key: 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
+
+
+
