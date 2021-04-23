@@ -39,6 +39,7 @@ public class TicketingSystemUtility {
             TicketingSystemUtility ticketingSystemUtility = new TicketingSystemUtility();
             ticketingSystemUtility.processRequest();
             logger.info("************************ Ended the Ticketing System Utility ************************");
+            System.exit(0);
         }
         catch (Exception ex){
             StringWriter stringWriter = new StringWriter();
@@ -49,11 +50,12 @@ public class TicketingSystemUtility {
 
     public void processRequest(){
         System.out.println("******************* Ticketing System *******************");
-        System.out.println("Enter your choice of User.\n1.Agent\n2.User");
+
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
 
         do{
+            System.out.println("Enter your choice of User.\n1.Agent\n2.User");
+            int choice = scanner.nextInt();
         switch (choice){
             case 1:
                 processRequestInterface.processAgent();

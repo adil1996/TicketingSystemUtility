@@ -1,5 +1,7 @@
 package com.grophin.ticketingsystemutility.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grophin.ticketingsystemutility.config.APIConfig;
 import com.grophin.ticketingsystemutility.constans.Constants;
 import javassist.bytecode.SyntheticAttribute;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 @Service
@@ -21,19 +24,20 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
     @Override
     public void Register(String url) {
         try{
-            System.out.println("Enter Registration Details.");
+            String sc1= sc.nextLine();
+        System.out.println("Enter Registration Details.");
         System.out.println("Enter name:");
-        String name = sc.next();
+        String name = sc.nextLine();
         System.out.println("Enter email:");
-        String email = sc.next();
+        String email = sc.nextLine();
         System.out.println("Enter password:");
-        String password = sc.next();
+        String password = sc.nextLine();
         System.out.println("Enter address:");
-        String address = sc.next();
+        String address = sc.nextLine();
         System.out.println("Enter contactnumber:");
-        String contact = sc.next();
+        String contact = sc.nextLine();
         System.out.println("Enter id:");
-        String id = sc.next();
+        String id = sc.nextLine();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -55,7 +59,7 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
         if(response.code() == 200)
         System.out.println("Registered Successfully");
         else
-            System.out.println("Failed to register.");
+            System.out.println("Failed to register."+response.body().string());
         }
         catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
@@ -88,17 +92,22 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                         System.out.println("Agent Logged In");
                         agentChoice(res);
                     }
+                    else{
+                        System.out.println("Login failed----");
+                    }
                 }else{
                     String userEmail = (String) res.get(Constants.USEREMAIL);
                     String userPassword = (String) res.get(Constants.USERPASSWORD);
                     if(email.equals(userEmail) && password.equals(userPassword)){
                         System.out.println("User Logged In");
                         userChoice(res);
+                    }else {
+                        System.out.println("Login failed----");
                     }
                 }
+            }else{
+            System.out.println("Login failed----"+response.body().string());
             }
-
-            System.out.println("Login failed----");
         }
             catch (Exception ex){
                 System.out.println(ex.getLocalizedMessage());
@@ -106,13 +115,16 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
     }
 
     public void agentChoice(JSONObject jsonObject){
+
+        do{
         System.out.println("Enter the choice to process.");
         System.out.println("1.Update Status\n2.List Tickets\n3.Filter Ticket By ID\n4.Filter Ticket By Status\n5.Filter Ticket By AgentId\n6.Filter Ticket By Customer\n7.Update details.\n8.Delete Ticket\n9.Update response.");
         int choice = sc.nextInt();
         String url = null;
+
         switch (choice){
             case 1:
-                url= apiConfig.getTicket().getUpdate().getDetails().getUrl();
+                url= apiConfig.getTicket().getUpdate().getStatus().getUrl();
                 System.out.println("Enter the ticket id:");
                 String ticketid = sc.next();
                 JSONObject obj = new JSONObject();
@@ -121,7 +133,8 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
 
 
                     System.out.println("Enter the status:");
-                    String status = sc.next();
+                    String status = sc.nextLine();
+                    status = sc.nextLine();
                     obj1.put("status",status);
 
                 obj.put("dataMap",obj1);
@@ -139,9 +152,10 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 fetchTicketDetails(url);
                 break;
             case 4:
+                String abc3 = sc.nextLine();
                 url=apiConfig.getTicket().getFetch().getStatus().getUrl();
                 System.out.println("Enter the status:");
-                String status1 = sc.next();
+                String status1 = sc.nextLine();
                 url = url+status1;
                 fetchTicketDetails(url);
                 break;
@@ -153,9 +167,10 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 fetchTicketDetails(url);
                 break;
             case 6:
+                String abc1 = sc.nextLine();
                 url=apiConfig.getTicket().getFetch().getCustomer().getUrl();
                 System.out.println("Enter the customer:");
-                String cust = sc.next();
+                String cust = sc.nextLine();
                 url = url+cust;
                 fetchTicketDetails(url);
                 break;
@@ -167,25 +182,27 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 obj2.put("ticketId",ticketid1);
                 JSONObject obj3 = new JSONObject();
                 do{
-                    System.out.println("Enter the key for filed:");
-                    String key = sc.next();
-                    System.out.println("Enter the value for filed:");
-                    String value = sc.next();
+                    System.out.println("Enter the key for field:");
+                    String key = sc.nextLine();
+                    key = sc.nextLine();
+                    System.out.println("Enter the value for field:");
+                    String value = sc.nextLine();
                     obj3.put(key,value);
                     System.out.println("Do You want to continue?");
-                }while(sc.next().equalsIgnoreCase("y"));
+                }while(sc.nextLine().equalsIgnoreCase("y"));
 
                 obj2.put("dataMap",obj3);
                 updateDetails(url,obj2.toString());
                 break;
             case 8:
-                url=" http://localhost:8881/api/v1/tickets/deleteticket/";
+                url="http://localhost:8881/api/v1/tickets/deleteticket/";
                 System.out.println("Enter the ticket id:");
                 String ticketid3 = sc.next();
                 deleteTicket(url,ticketid3);
                 break;
             case 9:
-                url= apiConfig.getTicket().getUpdate().getDetails().getUrl();
+                String ab = sc.nextLine();
+                url= "http://localhost:8881/api/v1/tickets/updateresponse";
                 System.out.println("Enter the ticket id:");
                 String ticketid4 = sc.next();
                 JSONObject obj4 = new JSONObject();
@@ -193,12 +210,13 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 JSONObject obj5 = new JSONObject();
 
 
-                System.out.println("Enter the status:");
-                String status2 = sc.next();
-                obj5.put("status",status2);
+                System.out.println("Enter the response:");
+                String status2 = sc.nextLine();
+                status2 = sc.nextLine();
+                obj5.put("response",status2);
 
                 obj4.put("dataMap",obj5);
-                updateDetails(url,obj4.toString());
+                updateResponse(url,obj4.toString());
                 break;
             default:
                 System.out.println("Invalid Input");
@@ -206,13 +224,15 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
 
 
         }
+            System.out.println("Do you want to continue?");}while (sc.next().equalsIgnoreCase("y"));
     }
 
     public void userChoice(JSONObject jsonObject){
-        System.out.println("Enter the choice to process.");
-        System.out.println("1.Create Ticket\n2.List Tickets\n3.Filter Ticket By ID\n4.Filter Ticket By Status\n5.Filter Ticket By AgentId\n6.Filter Ticket By Customer\n7.Update details.\n8.Assign agent.");
-        int choice = sc.nextInt();
         String url = null;
+        do{
+            System.out.println("Enter the choice to process.");
+            System.out.println("1.Create Ticket\n2.List Tickets\n3.Filter Ticket By ID\n4.Filter Ticket By Status\n5.Filter Ticket By AgentId\n6.Filter Ticket By Customer\n7.Update details.\n8.Assign agent.");
+            int choice = sc.nextInt();
         switch (choice){
             case 1:
                 url = apiConfig.getTicket().getAdd().getUrl();
@@ -246,7 +266,8 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
             case 6:
                 url=apiConfig.getTicket().getFetch().getCustomer().getUrl();
                 System.out.println("Enter the customer:");
-                String cust = sc.next();
+                String cust = sc.nextLine();
+                cust = sc.nextLine();
                 url = url+cust;
                 fetchTicketDetails(url);
                 break;
@@ -258,13 +279,14 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 obj.put("ticketId",ticketid);
                 JSONObject obj1 = new JSONObject();
                 do{
-                    System.out.println("Enter the key for filed:");
-                    String key = sc.next();
-                    System.out.println("Enter the value for filed:");
-                    String value = sc.next();
+                    System.out.println("Enter the key for field:");
+                    String key = sc.nextLine();
+                    key = sc.nextLine();
+                    System.out.println("Enter the value for field:");
+                    String value = sc.nextLine();
                     obj1.put(key,value);
                     System.out.println("Do You want to continue?");
-                }while(sc.next().equalsIgnoreCase("y"));
+                }while(sc.nextLine().equalsIgnoreCase("y"));
 
                 obj.put("dataMap",obj1);
                 updateDetails(url,obj.toString());
@@ -273,41 +295,70 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
                 url = apiConfig.getAgent().getAssign().getUrl();
                 System.out.println("Enter the ticket id:");
                 String ticketid1 = sc.next();
-                System.out.println("Enter the agent id:");
-                String agentId = sc.next();
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("ticketId",ticketid1);
-                jsonObject1.put("agentId",agentId);
-                updateDetails(url,jsonObject1.toString());
+                try{
+                OkHttpClient client = new OkHttpClient().newBuilder()
+                        .build();
+                Request request = new Request.Builder()
+                        .url("http://localhost:8881/api/v1/agents/getAgents")
+                        .method("GET", null)
+                        .build();
+                Response response = client.newCall(request).execute();
+                String body = response.body().string();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    List<String> listAgent = objectMapper.readValue(body,List.class);
+                    System.out.println("Enter the agent id from the available List: "+listAgent);
+                    String agentId = sc.next();
+                    if(listAgent.contains(agentId)){
+                    JSONObject jsonObject1 = new JSONObject();
+                    jsonObject1.put("ticketId",ticketid1);
+                    jsonObject1.put("agentId",agentId);
+                    updateDetails(url,jsonObject1.toString());}
+                    else{
+                        System.out.println("Entered Wrong agentId.");
+                    }
+
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
+
                 break;
 
             default:
                 System.out.println("Invalid Input");
-
-
-
+                break;
         }
+                System.out.println("Do you want to Continue?");
+        }while (sc.next().equalsIgnoreCase("y"));
     }
 
     public void createTicket(String url,JSONObject res){
 
         try{
             System.out.println("Enter Ticket Details.");
+            String user = res.getString(Constants.USERNAME);
             System.out.println("Enter id:");
             String id = sc.next();
+
             System.out.println("Enter type:");
-            String type = sc.next();
-            String user = res.getString(Constants.USERNAME);
+            String type = sc.nextLine();
+             type = sc.nextLine();
+
             System.out.println("Enter desciption:");
-            String desc = sc.next();
+            String desc = sc.nextLine();
+
             System.out.println("Enter priority:");
-            String priority = sc.next();
+            String priority = sc.nextLine();
+
             System.out.println("Enter customer:");
-            String customer = sc.next();
+            String customer = sc.nextLine();
+
             System.out.println("Enter deadline:");
-            String deadline = sc.next();
+            String deadline = sc.nextLine();
+
             System.out.println("Enter Title:");
-            String title = sc.next();
+            String title = sc.nextLine();
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(Constants.ID,id);
@@ -396,9 +447,30 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
             Response response = client.newCall(request).execute();
             if(response.code() == 200){
                 System.out.println("Successfullly updated");
+                System.out.println("Enter from address:");
+                String from = sc.next();
+
+                System.out.println("Enter to address:");
+                String to = sc.nextLine();
+                to = sc.nextLine();
+
+                System.out.println("Enter content:");
+                String content = sc.nextLine();
+
+                System.out.println("Enter subject:");
+                String subject = sc.nextLine();
+
+                JSONObject emailObj = new JSONObject();
+                emailObj.put("to",to);
+                emailObj.put("from",from);
+                emailObj.put("content",content);
+                emailObj.put("subject",subject);
+                emailObj.put("apiKey",apiConfig.getEmail().getKey());
+                sendEmail(apiConfig.getEmail().getUrl(),emailObj.toString());
+
             }
             else{
-                System.out.println("Failed to update");
+                System.out.println("Failed to update"+response.body().string());
             }
         }catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
@@ -419,6 +491,8 @@ public class TicketingUtilImpl implements TicketingUtilInterface {
             Response response = client.newCall(request).execute();
             if(response.code() == 200)
             System.out.println("Email sent");
+            else
+                System.out.println("failed o send"+response.body().string());
 
         }catch (Exception ex){
             System.out.println(ex.getLocalizedMessage());
